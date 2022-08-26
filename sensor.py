@@ -1,26 +1,21 @@
 """Platform for sensor integration."""
 from __future__ import annotations
-from datetime import timedelta
 
 from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorEntity,
-    SensorStateClass,
+    SensorEntity
 )
 
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from .const import (
-    SCAN_INTERVAL,
+    SCAN_INT,
     DOMAIN
 )
 
 import logging
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = SCAN_INTERVAL
+SCAN_INTERVAL = SCAN_INT
 
 async def async_setup_entry(hass,config_entry,async_add_entities):
     """Set up the sensor platform."""
@@ -31,6 +26,7 @@ async def async_setup_entry(hass,config_entry,async_add_entities):
     )
 
 class CanvasStudentSensor(SensorEntity):
+    """Canvas Student entity definition""" 
     def __init__(
         self,
         hass: HomeAssistant,
@@ -55,9 +51,10 @@ class CanvasStudentSensor(SensorEntity):
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._attr_json = self._attr_json
+        self._attr_json = "test"
 
 class CanvasCourseSensor(SensorEntity):
+    """Canvas Course entity definition"""
     def __init__(
         self,
         hass: HomeAssistant,
@@ -82,4 +79,4 @@ class CanvasCourseSensor(SensorEntity):
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._attr_json = self._attr_json
+        self._attr_json = "test"

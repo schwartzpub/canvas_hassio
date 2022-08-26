@@ -1,24 +1,24 @@
+"""Canvas Hub"""
 from __future__ import annotations
 
 import logging
-import aiohttp
 
-from typing import Any, Dict
-from datetime import datetime, date
+from typing import Any
 
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
     CONF_BASEURI,
     CONF_SECRET,
     DOMAIN,
-    SCAN_INTERVAL
+    SCAN_INT
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-class CanvasHub(DataUpdateCoordinator[Dict[str, Any]]):
+class CanvasHub(DataUpdateCoordinator[dict[str, Any]]):
+    """Canvas Hub definition"""
     def __init__(
         self,
         hass: HomeAssistant
@@ -28,7 +28,7 @@ class CanvasHub(DataUpdateCoordinator[Dict[str, Any]]):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=SCAN_INTERVAL,
+            update_interval=SCAN_INT,
         )
 
         self._baseuri = self.config_entry.data[CONF_BASEURI]

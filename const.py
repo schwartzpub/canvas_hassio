@@ -8,7 +8,7 @@ VERSION = "0.0.1"
 
 HA_SENSOR = ["sensor"]
 
-SCAN_INTERVAL = timedelta(minutes=1)
+SCAN_INT = timedelta(minutes=1)
 
 CONF_BASEURI = "baseuri"
 CONF_SECRET = "token"

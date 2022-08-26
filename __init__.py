@@ -17,6 +17,7 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 def setup (hass, config):
+    """Setup"""
     return True
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
