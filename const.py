@@ -4,7 +4,7 @@ from datetime import timedelta
 
 NAME = "Canvas"
 DOMAIN = "canvas"
-VERSION = "0.0.1"
+VERSION = 1
 
 HA_SENSOR = ["sensor"]
 

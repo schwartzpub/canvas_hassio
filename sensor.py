@@ -47,11 +47,12 @@ class CanvasStudentSensor(SensorEntity):
             "json": self._attr_json
         }
 
-    async def async_update(self) -> str:
+    async def async_update(self) -> None:
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
         self._attr_json = "test"
+        return 
 
 class CanvasCourseSensor(SensorEntity):
     """Canvas Course entity definition"""
@@ -80,3 +81,4 @@ class CanvasCourseSensor(SensorEntity):
         This is the only method that should fetch new data for Home Assistant.
         """
         self._attr_json = "test"
+        return

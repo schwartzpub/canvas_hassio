@@ -38,10 +38,13 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for canvas."""
     _LOGGER.warning("-------SEEN THIS--------")
+    
     VERSION = VERSION
+    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
     async def async_step_user(self, user_input: None): # pylint: disable=signature-differs
         """Handle the initial step."""
+
         if user_input is None:
             return self.async_show_form(
                 step_id="user", data_schema=STEP_USER_DATA_SCHEMA

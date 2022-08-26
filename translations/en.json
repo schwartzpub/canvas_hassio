@@ -11,8 +11,8 @@
         "step": {
             "user": {
                 "data": {
-                    "baseuri": "Base URI",
-                    "token": "Token"
+                    "url": "Base URI",
+                    "api_token": "Token"
                 }
             }
         }
