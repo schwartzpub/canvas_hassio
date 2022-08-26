@@ -26,21 +26,21 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_SECRET): str
     }
 )
-
+_LOGGER.warning("-------SEEN THIS 2--------")
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """Validate the user input allows us to connect.
 
     Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
     """
-    return {"title": NAME}
+    return {"title": NAME, CONF_BASEURI: "test", CONF_SECRET: "test"}
 
 @config_entries.HANDLERS.register(DOMAIN)
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for canvas."""
-
+    _LOGGER.warning("-------SEEN THIS--------")
     VERSION = VERSION
 
-    async def async_step_user(self, user_input: None):
+    async def async_step_user(self, user_input: None): # pylint: disable=signature-differs
         """Handle the initial step."""
         if user_input is None:
             return self.async_show_form(
