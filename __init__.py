@@ -1,35 +1,32 @@
 """The canvas integration."""
 from __future__ import annotations
 
+import logging
+
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-import logging
 from .canvashub import CanvasHub
-from .const import (
-    CONF_BASEURI,
-    CONF_SECRET,
-    HA_SENSOR,
-    DOMAIN
-)
+from .const import DOMAIN, HA_SENSOR
 
 _LOGGER = logging.getLogger(__name__)
 
-def setup (hass, config):
-    """Setup"""
+
+def setup(hass, config):
+    """Set up init."""
     return True
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up canvas from a config entry."""
 
-    hass.data.setdefault(DOMAIN,{})
+    hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = CanvasHub(hass)
 
     _LOGGER.warning("-------SETTING UP PLATFORMS--------")
-    
+
     hass.config_entries.async_setup_platforms(entry, HA_SENSOR)
-        
+
     _LOGGER.warning("-------COMPLETED SETTING UP PLATFORMS---------")
     return True
 
