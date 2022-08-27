@@ -87,7 +87,7 @@ class CanvasAssignmentSensor(SensorEntity):
 
     def __init__(self, hass: HomeAssistant, hub) -> None:
         """Init sensor."""
-        self._attr_name = "Canvas Assignmentss"
+        self._attr_name = "Canvas Assignments"
         self._attr_native_unit_of_measurement = None
         self._attr_device_class = None
         self._attr_state_class = None
