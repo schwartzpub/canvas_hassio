@@ -18,7 +18,6 @@ _LOGGER = logging.getLogger(__name__)
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {vol.Required(CONF_BASEURI): str, vol.Required(CONF_SECRET): str}
 )
-_LOGGER.warning("-------SEEN THIS 2--------")
 
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
@@ -32,8 +31,6 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 @config_entries.HANDLERS.register(DOMAIN)
 class CanvasConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for canvas."""
-
-    _LOGGER.warning("-------SEEN THIS--------")
 
     VERSION = VERSION
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL

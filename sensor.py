@@ -17,7 +17,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the sensor platform."""
     hub = hass.data[DOMAIN][config_entry.entry_id]
 
-    async_add_entities([CanvasStudentSensor(hass, hub), CanvasCourseSensor(hass, hub)])
+    async_add_entities([CanvasStudentSensor(hass, hub), CanvasCourseSensor(hass, hub), CanvasAssignmentSensor(hass,hub)])
 
 
 class CanvasStudentSensor(SensorEntity):
@@ -32,7 +32,7 @@ class CanvasStudentSensor(SensorEntity):
         self._attr_unique_id = "canvas_student"
         self._hub = hub
         self._hass = hass
-        self._attr_json = "test"
+        self._attr_json = "Loading..."
 
     @property
     def extra_state_attributes(self):
@@ -44,7 +44,7 @@ class CanvasStudentSensor(SensorEntity):
 
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._attr_json = "test"
+        self._attr_json = await self._hub.poll_observees()
         return
 
 
@@ -60,7 +60,7 @@ class CanvasCourseSensor(SensorEntity):
         self._attr_unique_id = "canvas_course"
         self._hub = hub
         self._hass = hass
-        self._attr_json = "test"
+        self._attr_json = "Loading..."
 
     @property
     def extra_state_attributes(self):
@@ -72,5 +72,32 @@ class CanvasCourseSensor(SensorEntity):
 
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._attr_json = "test"
+        self._attr_json = await self._hub.poll_courses()
+        return
+
+class CanvasAssignmentSensor(SensorEntity):
+    """Canvas Course entity definition."""
+
+    def __init__(self, hass: HomeAssistant, hub) -> None:
+        """Init sensor."""
+        self._attr_name = "Canvas Assignmentss"
+        self._attr_native_unit_of_measurement = None
+        self._attr_device_class = None
+        self._attr_state_class = None
+        self._attr_unique_id = "canvas_assignment"
+        self._hub = hub
+        self._hass = hass
+        self._attr_json = "Loading..."
+
+    @property
+    def extra_state_attributes(self):
+        """Add extra attribute."""
+        return {"json": self._attr_json}
+
+    async def async_update(self) -> None:
+        """Fetch new state data for the sensor.
+
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        self._attr_json = await self._hub.poll_assignments()
         return
