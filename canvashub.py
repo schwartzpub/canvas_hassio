@@ -1,10 +1,11 @@
 """Canvas Hub."""
 from __future__ import annotations
 
+from datetime import datetime
 import logging
+
 import aiohttp
 
-from datetime import datetime
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -29,7 +30,15 @@ class CanvasHub(DataUpdateCoordinator):
     async def poll_observees(self) -> list:
         """Get Canvas Observees (students)."""
         async with aiohttp.ClientSession() as session:
-            async with session.get('{0}/api/v1/users/self/observees'.format('https://rsdmo.instructure.com'),headers={'Accept': 'application/json', 'Authorization': 'Bearer {0}'.format(self._secret)}) as studentresp:
+            async with session.get(
+                "{}/api/v1/users/self/observees".format(
+                    "https://rsdmo.instructure.com"
+                ),
+                headers={
+                    "Accept": "application/json",
+                    "Authorization": f"Bearer {self._secret}",
+                },
+            ) as studentresp:
                 resp = await studentresp.json()
                 return resp
 
@@ -40,11 +49,27 @@ class CanvasHub(DataUpdateCoordinator):
         today = datetime.now()
         for observee in observees:
             async with aiohttp.ClientSession() as session:
-                async with session.get('{0}/api/v1/users/{1}/courses?include[]=term'.format('https://rsdmo.instructure.com',observee['id']),headers={'Accept': 'application/json', 'Authorization': 'Bearer {0}'.format(self._secret)}) as courseresp:
+                async with session.get(
+                    "{}/api/v1/users/{}/courses?include[]=term".format(
+                        "https://rsdmo.instructure.com", observee["id"]
+                    ),
+                    headers={
+                        "Accept": "application/json",
+                        "Authorization": f"Bearer {self._secret}",
+                    },
+                ) as courseresp:
                     resp = await courseresp.json()
                     for course in resp:
-                        if course["term"] != None:
-                            if datetime.strptime(course["term"]["start_at"],'%Y-%m-%dT%H:%M:%SZ') < today < datetime.strptime(course["term"]["end_at"],'%Y-%m-%dT%H:%M:%SZ'):
+                        if course["term"] is not None:
+                            if (
+                                datetime.strptime(
+                                    course["term"]["start_at"], "%Y-%m-%dT%H:%M:%SZ"
+                                )
+                                < today
+                                < datetime.strptime(
+                                    course["term"]["end_at"], "%Y-%m-%dT%H:%M:%SZ"
+                                )
+                            ):
                                 courses.append(course)
         return courses
 
@@ -53,9 +78,17 @@ class CanvasHub(DataUpdateCoordinator):
         assignments = []
         courses = await self.poll_courses()
         for course in courses:
-            observee = course['enrollments'][0]['user_id']
+            observee = course["enrollments"][0]["user_id"]
             async with aiohttp.ClientSession() as session:
-                async with session.get('{0}/api/v1/users/{1}/courses/{2}/assignments?include[]=submission'.format('https://rsdmo.instructure.com',observee,course['id']),headers={'Accept': 'application/json', 'Authorization': 'Bearer {0}'.format(self._secret)}) as assignmentresp:
+                async with session.get(
+                    "{}/api/v1/users/{}/courses/{}/assignments?include[]=submission".format(
+                        "https://rsdmo.instructure.com", observee, course["id"]
+                    ),
+                    headers={
+                        "Accept": "application/json",
+                        "Authorization": f"Bearer {self._secret}",
+                    },
+                ) as assignmentresp:
                     resp = await assignmentresp.json()
                     for assignment in resp:
                         assignments.append(assignment)

@@ -17,7 +17,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the sensor platform."""
     hub = hass.data[DOMAIN][config_entry.entry_id]
 
-    async_add_entities([CanvasStudentSensor(hass, hub), CanvasCourseSensor(hass, hub), CanvasAssignmentSensor(hass,hub)])
+    async_add_entities(
+        [
+            CanvasStudentSensor(hass, hub),
+            CanvasCourseSensor(hass, hub),
+            CanvasAssignmentSensor(hass, hub),
+        ]
+    )
 
 
 class CanvasStudentSensor(SensorEntity):
@@ -74,6 +80,7 @@ class CanvasCourseSensor(SensorEntity):
         """
         self._attr_json = await self._hub.poll_courses()
         return
+
 
 class CanvasAssignmentSensor(SensorEntity):
     """Canvas Course entity definition."""
