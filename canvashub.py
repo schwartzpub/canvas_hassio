@@ -51,7 +51,7 @@ class CanvasHub(DataUpdateCoordinator):
         client = Canvas(f"{self._baseuri}",f"{self._secret}")
         courses = await self.poll_courses()
         for course in courses:
-            observee_id = course.enrollments[0]["user_id"]
-            assignmentresp = await client.assignments(course.id,observee_id)
+            observee = course.enrollments[0]
+            assignmentresp = await client.assignments(observee.get('user_id', ''),course.id)
             assignments.extend([Assignment(assignment) for assignment in assignmentresp])
         return assignments
