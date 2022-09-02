@@ -4,11 +4,7 @@
   "config_flow": true,
   "documentation": "https://github.com/schwartzpub/canvas_hassio",
   "issue_tracker": "https://github.com/schwartzpub/canvas_hassio/issues",
-  "requirements": [
-    "canvas_parent_api==0.0.3"
-  ],
-  "codeowners": [
-    "@schwartzpub"
-  ],
+  "requirements": ["canvas_parent_api==0.0.5"],
+  "codeowners": ["@schwartzpub"],
   "iot_class": "local_polling"
 }

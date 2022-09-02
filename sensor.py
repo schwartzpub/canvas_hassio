@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.core import HomeAssistant
@@ -38,7 +39,7 @@ class CanvasStudentSensor(SensorEntity):
         self._attr_unique_id = "canvas_student"
         self._hub = hub
         self._hass = hass
-        self._attr_students = {}
+        self._attr_students: dict[Any, Any] = {}
 
     @property
     def extra_state_attributes(self):
@@ -66,7 +67,7 @@ class CanvasCourseSensor(SensorEntity):
         self._attr_unique_id = "canvas_course"
         self._hub = hub
         self._hass = hass
-        self._attr_json = {}
+        self._attr_json: dict[Any, Any] = {}
 
     @property
     def extra_state_attributes(self):
@@ -94,7 +95,7 @@ class CanvasAssignmentSensor(SensorEntity):
         self._attr_unique_id = "canvas_assignment"
         self._hub = hub
         self._hass = hass
-        self._attr_json = {}
+        self._attr_json: dict[Any, Any] = {}
 
     @property
     def extra_state_attributes(self):
