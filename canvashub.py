@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import logging
+import asyncio
+import itertools
 
 from canvas_parent_api import Canvas
 from canvas_parent_api.models.assignment import Assignment
@@ -48,15 +50,15 @@ class CanvasHub(DataUpdateCoordinator):
     async def poll_assignments(self) -> list[Assignment]:
         """Get Canvas Assignments."""
         assignments: list[Assignment] = []
+        assignment_tasks = []
 
         client = Canvas(f"{self._baseuri}", f"{self._secret}")
         courses = await self.poll_courses()
         for course in courses:
             observee = course.enrollments[0]
-            assignmentresp = await client.assignments(
-                observee.get("user_id", ""), course.id
-            )
-            assignments.extend(
-                [Assignment(assignment) for assignment in assignmentresp]
-            )
+            assignment_tasks.append(asyncio.create_task(client.assignments(observee.get("user_id", ""), course.id)))
+        assignment_results = await asyncio.gather(*assignment_tasks)
+        assignments.extend(
+            [Assignment(assignment) for assignment in itertools.chain.from_iterable(assignment_results)]
+        )
         return assignments

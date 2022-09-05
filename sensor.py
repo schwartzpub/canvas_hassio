@@ -39,7 +39,7 @@ class CanvasStudentSensor(SensorEntity):
         self._attr_unique_id = "canvas_student"
         self._hub = hub
         self._hass = hass
-        self._attr_students: dict[Any, Any] = {}
+        self._attr_students= {}
 
     @property
     def extra_state_attributes(self):
@@ -67,19 +67,19 @@ class CanvasCourseSensor(SensorEntity):
         self._attr_unique_id = "canvas_course"
         self._hub = hub
         self._hass = hass
-        self._attr_json: dict[Any, Any] = {}
+        self._attr_courses= {}
 
     @property
     def extra_state_attributes(self):
         """Add extra attribute."""
-        return {"courses": [x.as_dict() for x in self._attr_json]}
+        return {"courses": [x.as_dict() for x in self._attr_courses]}
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor.
 
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._attr_json = await self._hub.poll_courses()
+        self._attr_courses = await self._hub.poll_courses()
         return
 
 
@@ -95,17 +95,17 @@ class CanvasAssignmentSensor(SensorEntity):
         self._attr_unique_id = "canvas_assignment"
         self._hub = hub
         self._hass = hass
-        self._attr_json: dict[Any, Any] = {}
+        self._attr_assignments= {}
 
     @property
     def extra_state_attributes(self):
         """Add extra attribute."""
-        return {"assignments": [x.as_dict() for x in self._attr_json]}
+        return {"assignments": [x.as_dict() for x in self._attr_assignments]}
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor.
 
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._attr_json = await self._hub.poll_assignments()
+        self._attr_assignments = await self._hub.poll_assignments()
         return
