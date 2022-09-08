@@ -7,11 +7,11 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import CONF_BASEURI, CONF_SECRET, DOMAIN, NAME, VERSION
+from .const import CONF_BASEURI, CONF_SECRET, DEFAULT_SEMAPHORE, DOMAIN, NAME, VERSION, CONF_SEMAPHORE
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,6 +59,40 @@ class CanvasConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
         )
 
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> config_entries.OptionsFlow:
+        """Create the options flow."""
+        return OptionsFlowHandler(config_entry)
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Options Flow Class"""
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            _LOGGER.warn("init options flow handler no user input")
+            return self.async_create_entry(title=NAME, data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_SEMAPHORE,
+                        default = self.config_entry.options.get(CONF_SEMAPHORE, DEFAULT_SEMAPHORE),
+                        description = {
+                            CONF_SEMAPHORE: "The Semaphore is the number of concurrent requests to send to the Canvas API. Since Canvas rate-limits requests, it is recommended to keep this number low (max 15) to prevent rate limiting."
+                        }
+                    ): int 
+                }
+            ),
+        )
 
 class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""

@@ -2,10 +2,14 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 
-from homeassistant.components.sensor import SensorEntity
+from collections.abc import Callable
+from dataclasses import dataclass
+
+from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, SCAN_INT
 
@@ -13,99 +17,79 @@ _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL = SCAN_INT
 
+@dataclass
+class CanvasEntityDescriptionMixin:
+    """Mixin for required keys."""
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+    value_fn: Callable
+
+
+@dataclass
+class CanvasEntityDescription(
+    SensorEntityDescription, CanvasEntityDescriptionMixin
+):
+    """Describes AdGuard Home sensor entity."""
+
+SENSORS: tuple[CanvasEntityDescription, ...] = (
+    CanvasEntityDescription(
+        key="student",
+        name="Students",
+        value_fn=lambda canvas: canvas.poll_observees()
+    ),
+    CanvasEntityDescription(
+        key="course",
+        name="Courses",
+        value_fn=lambda canvas: canvas.poll_courses()
+    ),
+    CanvasEntityDescription(
+        key="assignment",
+        name="Assignments",
+        value_fn=lambda canvas: canvas.poll_assignments()
+    ),
+    CanvasEntityDescription(
+        key="submission",
+        name="Submissions",
+        value_fn=lambda canvas: canvas.poll_submissions()
+    )
+)
+
+async def async_setup_entry(
+    hass: HomeAssistant, 
+    config_entry: ConfigEntry, 
+    async_add_entities: AddEntitiesCallback
+    ):
     """Set up the sensor platform."""
     hub = hass.data[DOMAIN][config_entry.entry_id]
-
     async_add_entities(
-        [
-            CanvasStudentSensor(hass, hub),
-            CanvasCourseSensor(hass, hub),
-            CanvasAssignmentSensor(hass, hub),
-        ]
+        [CanvasSensor(description, hub) for description in SENSORS],
+        True,
     )
 
 
-class CanvasStudentSensor(SensorEntity):
-    """Canvas Student entity definition."""
+class CanvasSensor(SensorEntity):
+    """Canvas Sensor Definition."""
+    entity_description: CanvasEntityDescription
 
-    def __init__(self, hass: HomeAssistant, hub) -> None:
-        """Init sensor."""
-        self._attr_name = "Canvas Students"
-        self._attr_native_unit_of_measurement = None
-        self._attr_device_class = None
-        self._attr_state_class = None
-        self._attr_unique_id = "canvas_student"
+    def __init__(
+        self,
+        description: CanvasEntityDescription,
+        hub
+    ) -> None:
         self._hub = hub
-        self._hass = hass
-        self._attr_students= {}
+        self._name = description.name
+        self._attr_unique_id = f"{description.name}"
+        self._entity_description = description
+        self._attr_canvas_data = {}    
 
     @property
     def extra_state_attributes(self):
         """Add extra attribute."""
-        return {"students": [x.as_dict() for x in self._attr_students]}
+        return {f"{self._entity_description.key}": [x.as_dict() for x in self._attr_canvas_data]}
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor.
 
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._attr_students = await self._hub.poll_observees()
-        return
-
-
-class CanvasCourseSensor(SensorEntity):
-    """Canvas Course entity definition."""
-
-    def __init__(self, hass: HomeAssistant, hub) -> None:
-        """Init sensor."""
-        self._attr_name = "Canvas Courses"
-        self._attr_native_unit_of_measurement = None
-        self._attr_device_class = None
-        self._attr_state_class = None
-        self._attr_unique_id = "canvas_course"
-        self._hub = hub
-        self._hass = hass
-        self._attr_courses= {}
-
-    @property
-    def extra_state_attributes(self):
-        """Add extra attribute."""
-        return {"courses": [x.as_dict() for x in self._attr_courses]}
-
-    async def async_update(self) -> None:
-        """Fetch new state data for the sensor.
-
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        self._attr_courses = await self._hub.poll_courses()
-        return
-
-
-class CanvasAssignmentSensor(SensorEntity):
-    """Canvas Course entity definition."""
-
-    def __init__(self, hass: HomeAssistant, hub) -> None:
-        """Init sensor."""
-        self._attr_name = "Canvas Assignments"
-        self._attr_native_unit_of_measurement = None
-        self._attr_device_class = None
-        self._attr_state_class = None
-        self._attr_unique_id = "canvas_assignment"
-        self._hub = hub
-        self._hass = hass
-        self._attr_assignments= {}
-
-    @property
-    def extra_state_attributes(self):
-        """Add extra attribute."""
-        return {"assignments": [x.as_dict() for x in self._attr_assignments]}
-
-    async def async_update(self) -> None:
-        """Fetch new state data for the sensor.
-
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        self._attr_assignments = await self._hub.poll_assignments()
+        self._attr_canvas_data = await self._entity_description.value_fn(self._hub)
         return

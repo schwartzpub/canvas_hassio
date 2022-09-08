@@ -16,5 +16,14 @@
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "semaphore": "The Semaphore is the number of concurrent requests to send to the Canvas API. Since Canvas rate-limits requests, it is recommended to keep this number low (max 15) to prevent rate limiting."
+        }
+      }
+    }
   }
 }

@@ -8,10 +8,12 @@ VERSION = 1
 
 HA_SENSOR = ["sensor"]
 
-SCAN_INT = timedelta(minutes=1)
+SCAN_INT = timedelta(minutes=10)
 
 CONF_BASEURI = "baseuri"
 CONF_SECRET = "token"
+CONF_SEMAPHORE = "semaphore"
+DEFAULT_SEMAPHORE = 15
 
 STUDENTS = "Student(s)"
 COURSES = "Course(s)"
