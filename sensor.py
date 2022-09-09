@@ -34,25 +34,25 @@ class CanvasEntityDescription(
 SENSORS: tuple[CanvasEntityDescription, ...] = (
     CanvasEntityDescription(
         key="student",
-        name="Students",
+        name="Canvas Students",
         unique_id="canvas_student",
         value_fn=lambda canvas: canvas.poll_observees()
     ),
     CanvasEntityDescription(
         key="course",
-        name="Courses",
+        name="Canvas Courses",
         unique_id="canvas_course",
         value_fn=lambda canvas: canvas.poll_courses()
     ),
     CanvasEntityDescription(
         key="assignment",
-        name="Assignments",
+        name="Canvas Assignments",
         unique_id="canvas_assignment",
         value_fn=lambda canvas: canvas.poll_assignments()
     ),
     CanvasEntityDescription(
         key="submission",
-        name="Submissions",
+        name="Canvas Submissions",
         unique_id="canvas_submission",
         value_fn=lambda canvas: canvas.poll_submissions()
     )
