@@ -22,6 +22,7 @@ class CanvasEntityDescriptionMixin:
     """Mixin for required keys."""
 
     value_fn: Callable
+    unique_id: str
 
 
 @dataclass
@@ -34,21 +35,25 @@ SENSORS: tuple[CanvasEntityDescription, ...] = (
     CanvasEntityDescription(
         key="student",
         name="Students",
+        unique_id="canvas_student",
         value_fn=lambda canvas: canvas.poll_observees()
     ),
     CanvasEntityDescription(
         key="course",
         name="Courses",
+        unique_id="canvas_course",
         value_fn=lambda canvas: canvas.poll_courses()
     ),
     CanvasEntityDescription(
         key="assignment",
         name="Assignments",
+        unique_id="canvas_assignment",
         value_fn=lambda canvas: canvas.poll_assignments()
     ),
     CanvasEntityDescription(
         key="submission",
         name="Submissions",
+        unique_id="canvas_submission",
         value_fn=lambda canvas: canvas.poll_submissions()
     )
 )
@@ -76,8 +81,8 @@ class CanvasSensor(SensorEntity):
         hub
     ) -> None:
         self._hub = hub
-        self._name = description.name
-        self._attr_unique_id = f"{description.name}"
+        self._attr_name = description.name
+        self._attr_unique_id = f"{description.unique_id}"
         self._entity_description = description
         self._attr_canvas_data = {}    
 
