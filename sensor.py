@@ -89,8 +89,8 @@ class CanvasSensor(SensorEntity):
     @property
     def extra_state_attributes(self):
         """Add extra attribute."""
-        #return {f"{self._entity_description.key}": [x.as_dict() for x in self._attr_canvas_data]}
-        return {f"{self._entity_description.key}": self._attr_canvas_data}
+        return {f"{self._entity_description.key}": [x.as_dict() for x in self._attr_canvas_data]}
+
     async def async_update(self) -> None:
         """Fetch new state data for the sensor.
 

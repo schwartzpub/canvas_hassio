@@ -64,8 +64,8 @@ class CanvasHub(DataUpdateCoordinator):
         observees = await self.get_students()
         for observee in observees:
             courseresp = await self.get_courses(observee.id, self._semaphore)
-            #courses.extend([Course(course) for course in courseresp])
-        return courseresp
+            courses.extend([Course(course) for course in courseresp])
+        return courses
 
     async def poll_assignments(self) -> list[dict]:
         """Get Canvas Assignments."""
@@ -76,10 +76,12 @@ class CanvasHub(DataUpdateCoordinator):
         for course in courses:
             observee = course['enrollments'][0]
             if observee is not None:
-                assignment_tasks.append(asyncio.create_task(self.get_assignments(observee.user_id, course.id, self._semaphore)))
+                assignment_tasks.append(asyncio.create_task(self.get_assignments(observee.get("user_id", ""), course.id, self._semaphore)))
         assignment_results = await asyncio.gather(*assignment_tasks)
-        #assignments.extend([Assignment(assignment) for assignment in itertools.chain.from_iterable(assignment_results)])
-        return assignment_results
+        assignments.extend(
+            [Assignment(assignment) for assignment in itertools.chain.from_iterable(assignment_results)]
+        )
+        return assignments
 
     async def poll_submissions(self) -> list[dict]:
         """Get Canvas Assignments."""
@@ -90,7 +92,9 @@ class CanvasHub(DataUpdateCoordinator):
         for course in courses:
             observee = course['enrollments'][0]
             if observee is not None:
-                submission_tasks.append(asyncio.create_task(self.get_submissions(observee.user_id, course.id, self._semaphore)))
+                submission_tasks.append(asyncio.create_task(self.get_submissions(observee.get("user_id", ""), course.id, self._semaphore)))
         submission_results = await asyncio.gather(*submission_tasks)
-        #submissions.extend( [Submission(submission) for submission in itertools.chain.from_iterable(submission_results)])
-        return submission_results
+        submissions.extend(
+            [Submission(submission) for submission in itertools.chain.from_iterable(submission_results)]
+        )
+        return submissions
