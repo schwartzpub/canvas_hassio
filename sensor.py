@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import json
 
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -96,5 +97,7 @@ class CanvasSensor(SensorEntity):
 
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._attr_canvas_data = await self._entity_description.value_fn(self._hub)
+        canvasdata = await self._entity_description.value_fn(self._hub)
+        canvasdataobj = await canvasdata
+        self._attr_canvas_data = json.loads(json.dumps(canvasdataobj, default=lambda s: vars(s)))
         return
