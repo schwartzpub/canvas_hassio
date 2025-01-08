@@ -74,7 +74,7 @@ class CanvasHub(DataUpdateCoordinator):
 
         courses = await self.poll_courses()
         for course in courses:
-            observee = course.enrollments[0]
+            observee = course['enrollments'][0]
             if observee is not None:
                 assignment_tasks.append(asyncio.create_task(self.get_assignments(observee.user_id, course.id, self._semaphore)))
         assignment_results = await asyncio.gather(*assignment_tasks)
@@ -88,7 +88,7 @@ class CanvasHub(DataUpdateCoordinator):
 
         courses = await self.poll_courses()
         for course in courses:
-            observee = course.enrollments[0]
+            observee = course['enrollments'][0]
             if observee is not None:
                 submission_tasks.append(asyncio.create_task(self.get_submissions(observee.user_id, course.id, self._semaphore)))
         submission_results = await asyncio.gather(*submission_tasks)
