@@ -53,11 +53,11 @@ class CanvasHub(DataUpdateCoordinator):
         async with sem:
             return await self._client.submissions(student_id,course_id)
 
-    async def poll_observees(self) -> list[Observee]:
+    async def poll_observees(self) -> list[dict]:
         """Get Canvas Observees (students)."""
         return await self.get_students()
 
-    async def poll_courses(self) -> list[Course]:
+    async def poll_courses(self) -> list[dict]:
         """Get Canvas Courses."""
         courses: list[Course] = []
 
@@ -67,7 +67,7 @@ class CanvasHub(DataUpdateCoordinator):
             #courses.extend([Course(course) for course in courseresp])
         return courseresp
 
-    async def poll_assignments(self) -> list[Assignment]:
+    async def poll_assignments(self) -> list[dict]:
         """Get Canvas Assignments."""
         assignments: list[Assignment] = []
         assignment_tasks = []
@@ -82,7 +82,7 @@ class CanvasHub(DataUpdateCoordinator):
         #assignments.extend([Assignment(assignment) for assignment in itertools.chain.from_iterable(assignment_results)])
         return assignment_results
 
-    async def poll_submissions(self) -> list[Submission]:
+    async def poll_submissions(self) -> list[dict]:
         """Get Canvas Assignments."""
         submissions: list[Submission] = []
         submission_tasks = []
