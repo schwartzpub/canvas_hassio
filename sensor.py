@@ -97,6 +97,5 @@ class CanvasSensor(SensorEntity):
 
         This is the only method that should fetch new data for Home Assistant.
         """
-        canvasdata = await self._entity_description.value_fn(self._hub)
-        self._attr_canvas_data = json.loads(json.dumps(canvasdata, default=lambda s: vars(s)))
+        self._attr_canvas_data = await self._entity_description.value_fn(self._hub)
         return
